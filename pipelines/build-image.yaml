@@ -1,0 +1,27 @@
+trigger:
+ branches:
+   include:
+   - main
+ paths:
+   exclude:
+     - Deploy
+
+
+pool:
+  name: 'Azure Linux VM'
+
+resources:
+  repositories: 
+    - repository: PipelineTemplates
+      type: git
+      name: Azure-Infrastructure/Pipeline.Templates
+
+steps:
+- template: templates/docker/build-and-push-noscan.yaml@PipelineTemplates
+  parameters:
+    containerRepository: 'configuration.app'
+    registryServiceConnection: 'mxinfo-container-registry'
+    imageName: 'mxinfo.azurecr.io/configuration.app'
+    imageTag: '$(build.buildId)'
+    dockerFile: 'docker/Dockerfile'
+    workingDirectory: '$(build.sourcesDirectory)'

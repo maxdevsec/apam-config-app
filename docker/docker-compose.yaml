@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  vault-query:
+    image: "mxinfo.azurecr.io/vault.query.api:2153"
+    ports: 
+      - "5210:80"
+  vault-management:
+    image: "mxinfo.azurecr.io/vault.management.api:2154"
+    ports:
+     - "5015:80"
