@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apam-config-app
+  namespace: apam-config
+  labels:
+    app: apam-config-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apam-config-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: apam-config-app
+    spec:
+      serviceAccountName: apam-config-app
+      containers:
+        - name: config-app
+          image: docker.io/dmaxim/apam.config.app:v1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: '250Mi'
+              cpu: '250m'
+            limits:
+              memory: '500Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 3000
