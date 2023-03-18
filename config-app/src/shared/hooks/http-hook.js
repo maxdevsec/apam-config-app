@@ -13,9 +13,12 @@ export const useHttpClient = () => {
             const httpAbortCtrl = new AbortController();
             console.log(accounts[0]);
             const request = {
-                //...loginRequest,
-                scopes: ["fd98b10b-1d2a-43b3-8a8b-06c002e31819/AccessApi", "fd98b10b-1d2a-43b3-8a8b-06c002e31819/AccessWrite"],
-                account: accounts[0]
+              //...loginRequest,
+              scopes: [
+                '4b2c44a4-2fb6-4f92-a1b0-f49cc41e9947/AccessApi',
+                '4b2c44a4-2fb6-4f92-a1b0-f49cc41e9947/AccessWrite',
+              ],
+              account: accounts[0],
             };
 
             
