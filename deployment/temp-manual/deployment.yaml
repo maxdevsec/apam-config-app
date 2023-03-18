@@ -23,7 +23,7 @@ spec:
       serviceAccountName: apam-config-app
       containers:
         - name: config-app
-          image: docker.io/dmaxim/apam.config.app:v1
+          image: docker.io/dmaxim/apam.config.app:v5
           imagePullPolicy: IfNotPresent
           resources:
             requests:
