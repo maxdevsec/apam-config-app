@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apam-config-app
+  namespace: apam-config
+  labels:
+    app: apam-config-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apam-config-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: apam-config-app
+    spec:
+      serviceAccountName: apam-config-app
+      initContainers:
+        - name: config-writer
+          image: docker.io/dmaxim/apam.js.config.writer:v2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ApplicationIdToConfigure
+              value: '1'
+            - name: ConfigurationFile
+              value: '/app/config/config.js'
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_TENANT_ID
+                  name: js-config-api--client
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_CLIENT_ID
+                  name: js-config-api--client
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_CLIENT_SECRET
+                  name: js-config-api--client
+            - name: ConfigurationOptions__ConfigurationApiUrl
+              value: 'http://config-query-api/api/'
+            - name: ConfigurationOptions__Resource
+              value: 'api://4b2c44a4-2fb6-4f92-a1b0-f49cc41e9947/.default'
+            - name: ConfigurationOptions__ApplicationId
+              value: '2'
+            - name: ConfigurationOptions__Environment
+              value: 'DEV'
+          volumeMounts:
+            - mountPath: '/app/config'
+              name: config
+      containers:
+        - name: config-app
+          image: docker.io/dmaxim/apam.config.app:v5
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: '250Mi'
+              cpu: '250m'
+            limits:
+              memory: '500Mi'
+              cpu: '500m'
+          volumeMounts:
+            - mountPath: '/usr/share/nginx/html/config.js'
+              subPath: 'config.js'
+              name: config
+          ports:
+            - containerPort: 3000
+      volumes:
+        - name: config
+          emptyDir: {}
